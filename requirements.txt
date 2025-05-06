@@ -1,0 +1,7 @@
+numpy
+torch
+gym
+tqdm
+tensorboard
+airsim
+pyyaml
