@@ -1,0 +1,29 @@
+{
+    "Drone": {
+        "checkpoints": [
+            {
+                "steps": 4000,
+                "file_path": "results/drone10/Drone/Drone-4000.onnx",
+                "reward": -0.39999998919665813,
+                "creation_time": 1748138463.5404139,
+                "auxillary_file_paths": [
+                    "results/drone10/Drone/Drone-4000.pt"
+                ]
+            }
+        ],
+        "final_checkpoint": {
+            "steps": 4000,
+            "file_path": "results/drone10/Drone.onnx",
+            "reward": -0.39999998919665813,
+            "creation_time": 1748138463.5404139,
+            "auxillary_file_paths": [
+                "results/drone10/Drone/Drone-4000.pt"
+            ]
+        }
+    },
+    "metadata": {
+        "stats_format_version": "0.3.0",
+        "mlagents_version": "1.1.0",
+        "torch_version": "2.7.0"
+    }
+}

@@ -1,0 +1,29 @@
+{
+    "Drone": {
+        "checkpoints": [
+            {
+                "steps": 270320,
+                "file_path": "results/drone20/Drone/Drone-270320.onnx",
+                "reward": -340.29201340675354,
+                "creation_time": 1748161656.172569,
+                "auxillary_file_paths": [
+                    "results/drone20/Drone/Drone-270320.pt"
+                ]
+            }
+        ],
+        "final_checkpoint": {
+            "steps": 270320,
+            "file_path": "results/drone20/Drone.onnx",
+            "reward": -340.29201340675354,
+            "creation_time": 1748161656.172569,
+            "auxillary_file_paths": [
+                "results/drone20/Drone/Drone-270320.pt"
+            ]
+        }
+    },
+    "metadata": {
+        "stats_format_version": "0.3.0",
+        "mlagents_version": "1.1.0",
+        "torch_version": "2.7.0"
+    }
+}

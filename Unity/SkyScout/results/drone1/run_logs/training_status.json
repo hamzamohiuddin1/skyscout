@@ -2,22 +2,22 @@
     "Drone": {
         "checkpoints": [
             {
-                "steps": 8832,
-                "file_path": "results/drone1/Drone/Drone-8832.onnx",
-                "reward": -0.39999998919665813,
-                "creation_time": 1747859984.794354,
+                "steps": 243192,
+                "file_path": "results/drone1/Drone/Drone-243192.onnx",
+                "reward": 851.4726862226214,
+                "creation_time": 1748215771.40683,
                 "auxillary_file_paths": [
-                    "results/drone1/Drone/Drone-8832.pt"
+                    "results/drone1/Drone/Drone-243192.pt"
                 ]
             }
         ],
         "final_checkpoint": {
-            "steps": 8832,
+            "steps": 243192,
             "file_path": "results/drone1/Drone.onnx",
-            "reward": -0.39999998919665813,
-            "creation_time": 1747859984.794354,
+            "reward": 851.4726862226214,
+            "creation_time": 1748215771.40683,
             "auxillary_file_paths": [
-                "results/drone1/Drone/Drone-8832.pt"
+                "results/drone1/Drone/Drone-243192.pt"
             ]
         }
     },
