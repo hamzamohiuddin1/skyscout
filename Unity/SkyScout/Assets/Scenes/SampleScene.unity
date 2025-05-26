@@ -167,6 +167,22 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1777980180861098132, guid: a27c98268e9b54b50b597efba5bc699a, type: 3}
+      propertyPath: m_BrainParameters.VectorObservationSize
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 1777980180861098132, guid: a27c98268e9b54b50b597efba5bc699a, type: 3}
+      propertyPath: 'm_BrainParameters.VectorActionSize.Array.data[0]'
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 1777980180861098132, guid: a27c98268e9b54b50b597efba5bc699a, type: 3}
+      propertyPath: m_BrainParameters.m_ActionSpec.m_NumContinuousActions
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 1777980180861098135, guid: a27c98268e9b54b50b597efba5bc699a, type: 3}
+      propertyPath: MaxStep
+      value: 3000
+      objectReference: {fileID: 0}
     - target: {fileID: 7500600904106864049, guid: a27c98268e9b54b50b597efba5bc699a, type: 3}
       propertyPath: m_Name
       value: Environment (10)
@@ -224,6 +240,22 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1777980180861098132, guid: a27c98268e9b54b50b597efba5bc699a, type: 3}
+      propertyPath: m_BrainParameters.VectorObservationSize
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 1777980180861098132, guid: a27c98268e9b54b50b597efba5bc699a, type: 3}
+      propertyPath: 'm_BrainParameters.VectorActionSize.Array.data[0]'
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 1777980180861098132, guid: a27c98268e9b54b50b597efba5bc699a, type: 3}
+      propertyPath: m_BrainParameters.m_ActionSpec.m_NumContinuousActions
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 1777980180861098135, guid: a27c98268e9b54b50b597efba5bc699a, type: 3}
+      propertyPath: MaxStep
+      value: 3000
+      objectReference: {fileID: 0}
     - target: {fileID: 7500600904106864049, guid: a27c98268e9b54b50b597efba5bc699a, type: 3}
       propertyPath: m_Name
       value: Environment (6)
@@ -280,6 +312,22 @@ PrefabInstance:
     - target: {fileID: 558348167001685906, guid: a27c98268e9b54b50b597efba5bc699a, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1777980180861098132, guid: a27c98268e9b54b50b597efba5bc699a, type: 3}
+      propertyPath: m_BrainParameters.VectorObservationSize
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 1777980180861098132, guid: a27c98268e9b54b50b597efba5bc699a, type: 3}
+      propertyPath: 'm_BrainParameters.VectorActionSize.Array.data[0]'
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 1777980180861098132, guid: a27c98268e9b54b50b597efba5bc699a, type: 3}
+      propertyPath: m_BrainParameters.m_ActionSpec.m_NumContinuousActions
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 1777980180861098135, guid: a27c98268e9b54b50b597efba5bc699a, type: 3}
+      propertyPath: MaxStep
+      value: 3000
       objectReference: {fileID: 0}
     - target: {fileID: 7500600904106864049, guid: a27c98268e9b54b50b597efba5bc699a, type: 3}
       propertyPath: m_Name
@@ -475,6 +523,22 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1777980180861098132, guid: a27c98268e9b54b50b597efba5bc699a, type: 3}
+      propertyPath: m_BrainParameters.VectorObservationSize
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 1777980180861098132, guid: a27c98268e9b54b50b597efba5bc699a, type: 3}
+      propertyPath: 'm_BrainParameters.VectorActionSize.Array.data[0]'
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 1777980180861098132, guid: a27c98268e9b54b50b597efba5bc699a, type: 3}
+      propertyPath: m_BrainParameters.m_ActionSpec.m_NumContinuousActions
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 1777980180861098135, guid: a27c98268e9b54b50b597efba5bc699a, type: 3}
+      propertyPath: MaxStep
+      value: 3000
+      objectReference: {fileID: 0}
     - target: {fileID: 7500600904106864049, guid: a27c98268e9b54b50b597efba5bc699a, type: 3}
       propertyPath: m_Name
       value: Environment (5)
@@ -531,6 +595,22 @@ PrefabInstance:
     - target: {fileID: 558348167001685906, guid: a27c98268e9b54b50b597efba5bc699a, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1777980180861098132, guid: a27c98268e9b54b50b597efba5bc699a, type: 3}
+      propertyPath: m_BrainParameters.VectorObservationSize
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 1777980180861098132, guid: a27c98268e9b54b50b597efba5bc699a, type: 3}
+      propertyPath: 'm_BrainParameters.VectorActionSize.Array.data[0]'
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 1777980180861098132, guid: a27c98268e9b54b50b597efba5bc699a, type: 3}
+      propertyPath: m_BrainParameters.m_ActionSpec.m_NumContinuousActions
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 1777980180861098135, guid: a27c98268e9b54b50b597efba5bc699a, type: 3}
+      propertyPath: MaxStep
+      value: 3000
       objectReference: {fileID: 0}
     - target: {fileID: 7500600904106864049, guid: a27c98268e9b54b50b597efba5bc699a, type: 3}
       propertyPath: m_Name
@@ -759,6 +839,22 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1777980180861098132, guid: a27c98268e9b54b50b597efba5bc699a, type: 3}
+      propertyPath: m_BrainParameters.VectorObservationSize
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 1777980180861098132, guid: a27c98268e9b54b50b597efba5bc699a, type: 3}
+      propertyPath: 'm_BrainParameters.VectorActionSize.Array.data[0]'
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 1777980180861098132, guid: a27c98268e9b54b50b597efba5bc699a, type: 3}
+      propertyPath: m_BrainParameters.m_ActionSpec.m_NumContinuousActions
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 1777980180861098135, guid: a27c98268e9b54b50b597efba5bc699a, type: 3}
+      propertyPath: MaxStep
+      value: 3000
+      objectReference: {fileID: 0}
     - target: {fileID: 7500600904106864049, guid: a27c98268e9b54b50b597efba5bc699a, type: 3}
       propertyPath: m_Name
       value: Environment (3)
@@ -815,6 +911,22 @@ PrefabInstance:
     - target: {fileID: 558348167001685906, guid: a27c98268e9b54b50b597efba5bc699a, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1777980180861098132, guid: a27c98268e9b54b50b597efba5bc699a, type: 3}
+      propertyPath: m_BrainParameters.VectorObservationSize
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 1777980180861098132, guid: a27c98268e9b54b50b597efba5bc699a, type: 3}
+      propertyPath: 'm_BrainParameters.VectorActionSize.Array.data[0]'
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 1777980180861098132, guid: a27c98268e9b54b50b597efba5bc699a, type: 3}
+      propertyPath: m_BrainParameters.m_ActionSpec.m_NumContinuousActions
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 1777980180861098135, guid: a27c98268e9b54b50b597efba5bc699a, type: 3}
+      propertyPath: MaxStep
+      value: 3000
       objectReference: {fileID: 0}
     - target: {fileID: 7500600904106864049, guid: a27c98268e9b54b50b597efba5bc699a, type: 3}
       propertyPath: m_Name
@@ -873,6 +985,22 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1777980180861098132, guid: a27c98268e9b54b50b597efba5bc699a, type: 3}
+      propertyPath: m_BrainParameters.VectorObservationSize
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 1777980180861098132, guid: a27c98268e9b54b50b597efba5bc699a, type: 3}
+      propertyPath: 'm_BrainParameters.VectorActionSize.Array.data[0]'
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 1777980180861098132, guid: a27c98268e9b54b50b597efba5bc699a, type: 3}
+      propertyPath: m_BrainParameters.m_ActionSpec.m_NumContinuousActions
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 1777980180861098135, guid: a27c98268e9b54b50b597efba5bc699a, type: 3}
+      propertyPath: MaxStep
+      value: 3000
+      objectReference: {fileID: 0}
     - target: {fileID: 7500600904106864049, guid: a27c98268e9b54b50b597efba5bc699a, type: 3}
       propertyPath: m_Name
       value: Environment (8)
@@ -929,6 +1057,22 @@ PrefabInstance:
     - target: {fileID: 558348167001685906, guid: a27c98268e9b54b50b597efba5bc699a, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1777980180861098132, guid: a27c98268e9b54b50b597efba5bc699a, type: 3}
+      propertyPath: m_BrainParameters.VectorObservationSize
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 1777980180861098132, guid: a27c98268e9b54b50b597efba5bc699a, type: 3}
+      propertyPath: 'm_BrainParameters.VectorActionSize.Array.data[0]'
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 1777980180861098132, guid: a27c98268e9b54b50b597efba5bc699a, type: 3}
+      propertyPath: m_BrainParameters.m_ActionSpec.m_NumContinuousActions
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 1777980180861098135, guid: a27c98268e9b54b50b597efba5bc699a, type: 3}
+      propertyPath: MaxStep
+      value: 3000
       objectReference: {fileID: 0}
     - target: {fileID: 7500600904106864049, guid: a27c98268e9b54b50b597efba5bc699a, type: 3}
       propertyPath: m_Name
@@ -987,6 +1131,22 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1777980180861098132, guid: a27c98268e9b54b50b597efba5bc699a, type: 3}
+      propertyPath: m_BrainParameters.VectorObservationSize
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 1777980180861098132, guid: a27c98268e9b54b50b597efba5bc699a, type: 3}
+      propertyPath: 'm_BrainParameters.VectorActionSize.Array.data[0]'
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 1777980180861098132, guid: a27c98268e9b54b50b597efba5bc699a, type: 3}
+      propertyPath: m_BrainParameters.m_ActionSpec.m_NumContinuousActions
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 1777980180861098135, guid: a27c98268e9b54b50b597efba5bc699a, type: 3}
+      propertyPath: MaxStep
+      value: 3000
+      objectReference: {fileID: 0}
     - target: {fileID: 7500600904106864049, guid: a27c98268e9b54b50b597efba5bc699a, type: 3}
       propertyPath: m_Name
       value: Environment (2)
@@ -1044,6 +1204,22 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1777980180861098132, guid: a27c98268e9b54b50b597efba5bc699a, type: 3}
+      propertyPath: m_BrainParameters.VectorObservationSize
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 1777980180861098132, guid: a27c98268e9b54b50b597efba5bc699a, type: 3}
+      propertyPath: 'm_BrainParameters.VectorActionSize.Array.data[0]'
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 1777980180861098132, guid: a27c98268e9b54b50b597efba5bc699a, type: 3}
+      propertyPath: m_BrainParameters.m_ActionSpec.m_NumContinuousActions
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 1777980180861098135, guid: a27c98268e9b54b50b597efba5bc699a, type: 3}
+      propertyPath: MaxStep
+      value: 3000
+      objectReference: {fileID: 0}
     - target: {fileID: 7500600904106864049, guid: a27c98268e9b54b50b597efba5bc699a, type: 3}
       propertyPath: m_Name
       value: Environment (4)
@@ -1100,6 +1276,22 @@ PrefabInstance:
     - target: {fileID: 558348167001685906, guid: a27c98268e9b54b50b597efba5bc699a, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1777980180861098132, guid: a27c98268e9b54b50b597efba5bc699a, type: 3}
+      propertyPath: m_BrainParameters.VectorObservationSize
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 1777980180861098132, guid: a27c98268e9b54b50b597efba5bc699a, type: 3}
+      propertyPath: 'm_BrainParameters.VectorActionSize.Array.data[0]'
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 1777980180861098132, guid: a27c98268e9b54b50b597efba5bc699a, type: 3}
+      propertyPath: m_BrainParameters.m_ActionSpec.m_NumContinuousActions
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 1777980180861098135, guid: a27c98268e9b54b50b597efba5bc699a, type: 3}
+      propertyPath: MaxStep
+      value: 3000
       objectReference: {fileID: 0}
     - target: {fileID: 7500600904106864049, guid: a27c98268e9b54b50b597efba5bc699a, type: 3}
       propertyPath: m_Name

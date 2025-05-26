@@ -7,21 +7,16 @@ namespace MBaske
 {
     public class DroneAgent : Agent
     {
-        [SerializeField]
-        private Multicopter multicopter;
-
         [SerializeField] private Transform _goal;
         [SerializeField] private Renderer _renderer;
-        [SerializeField] private float environmentSize = 10f; // Size of each environment
+        [SerializeField] private float environmentSize = 10f;
+        [SerializeField] private float moveSpeed = 2f; // Units per second
 
         private Bounds bounds;
         private Resetter resetter;
 
         public override void Initialize()
         {
-            multicopter.Initialize();
-            
-            // Create bounds relative to this environment
             bounds = new Bounds(Vector3.zero, Vector3.one * environmentSize);
             resetter = new Resetter(transform);
         }
@@ -34,11 +29,11 @@ namespace MBaske
 
         private void SpawnObjects()
         {
-            // Reset drone position and rotation in local space
+            // Reset drone
             transform.localPosition = new Vector3(0f, 0.5f, 0f);
             transform.localRotation = Quaternion.identity;
 
-            // Spawn goal at random position within bounds
+            // Place goal randomly within bounds
             float randomAngle = Random.Range(0f, 360f);
             Vector3 randomDirection = Quaternion.Euler(0f, randomAngle, 0f) * Vector3.forward;
             float randomDistance = Random.Range(1f, 3f);
@@ -48,73 +43,41 @@ namespace MBaske
 
         public override void CollectObservations(VectorSensor sensor)
         {
-            sensor.AddObservation(multicopter.Inclination);
-            sensor.AddObservation(Normalization.Sigmoid(
-                multicopter.LocalizeVector(multicopter.Rigidbody.linearVelocity), 0.25f));
-            sensor.AddObservation(Normalization.Sigmoid(
-                multicopter.LocalizeVector(multicopter.Rigidbody.angularVelocity)));
-            
-            foreach (var rotor in multicopter.Rotors)
-            {
-                sensor.AddObservation(rotor.CurrentThrust);
-            }
+            Vector3 goalPos = _goal.localPosition / environmentSize;
+            Vector3 dronePos = transform.localPosition / environmentSize;
 
-            // Add goal position observations using local positions
-            Vector3 goalPos = _goal.localPosition;
-            Vector3 dronePos = transform.localPosition;
-            
-            // Normalize positions relative to environment size
-            sensor.AddObservation(goalPos.x / environmentSize);
-            sensor.AddObservation(goalPos.y / environmentSize);
-            sensor.AddObservation(goalPos.z / environmentSize);
-            sensor.AddObservation(dronePos.x / environmentSize);
-            sensor.AddObservation(dronePos.y / environmentSize);
-            sensor.AddObservation(dronePos.z / environmentSize);
+            sensor.AddObservation(goalPos);
+            sensor.AddObservation(dronePos);
         }
 
         public override void OnActionReceived(ActionBuffers actionBuffers)
         {
-            multicopter.UpdateThrust(actionBuffers.ContinuousActions.Array);
+            Vector3 move = Vector3.zero;
+            float delta = moveSpeed * Time.deltaTime;
 
-            if (bounds.Contains(transform.localPosition))
+            var act = actionBuffers.ContinuousActions;
+            move.x = Mathf.Clamp(act[0], -1f, 1f);
+            move.y = Mathf.Clamp(act[1], -1f, 1f);
+            move.z = Mathf.Clamp(act[2], -1f, 1f);
+
+            transform.localPosition += move * delta;
+
+            // Keep within bounds
+            if (!bounds.Contains(transform.localPosition))
             {
-                // Reward for maintaining stability
-                AddReward(multicopter.Frame.up.y);
-                AddReward(multicopter.Rigidbody.linearVelocity.magnitude * -0.2f);
-                AddReward(multicopter.Rigidbody.angularVelocity.magnitude * -0.1f);
-
-                // Penalty for staying too close to the ground
-                float heightFromGround = transform.localPosition.y;
-                if (heightFromGround < 1.0f)
-                {
-                    AddReward(-0.1f * (1.0f - heightFromGround));
-                }
-
-                // Calculate horizontal and vertical distances separately
-                Vector3 horizontalDronePos = new Vector3(transform.localPosition.x, 0, transform.localPosition.z);
-                Vector3 horizontalGoalPos = new Vector3(_goal.localPosition.x, 0, _goal.localPosition.z);
-                float horizontalDistanceToGoal = Vector3.Distance(horizontalDronePos, horizontalGoalPos);
-                float verticalDistanceToGoal = Mathf.Abs(transform.localPosition.y - _goal.localPosition.y);
-
-                // Higher penalty for vertical distance to encourage lifting
-                AddReward(-0.02f * horizontalDistanceToGoal);
-                AddReward(-0.05f * verticalDistanceToGoal);
-
-                // Additional reward for maintaining height
-                if (heightFromGround > 1.0f)
-                {
-                    AddReward(0.01f);
-                }
+                AddReward(-1f);
+                EndEpisode();
+                return;
             }
-            else
-            {
-                resetter.Reset();
-            }
+
+            // Reward shaping
+            float distance = Vector3.Distance(transform.localPosition, _goal.localPosition);
+            AddReward(-distance * 0.001f);
         }
 
         private void OnTriggerEnter(Collider other)
         {
-            if (other.gameObject.CompareTag("Goal"))
+            if (other.CompareTag("Goal"))
             {
                 AddReward(1.0f);
                 EndEpisode();
@@ -124,7 +87,6 @@ namespace MBaske
         private void OnCollisionEnter(Collision collision)
         {
             AddReward(-0.05f);
-
             if (_renderer != null)
             {
                 _renderer.material.color = Color.red;
@@ -141,12 +103,9 @@ namespace MBaske
 
         private void OnCollisionExit(Collision collision)
         {
-            if (collision.gameObject.CompareTag("Wall"))
+            if (collision.gameObject.CompareTag("Wall") && _renderer != null)
             {
-                if (_renderer != null)
-                {
-                    _renderer.material.color = Color.blue;
-                }
+                _renderer.material.color = Color.blue;
             }
         }
     }
