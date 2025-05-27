@@ -2,37 +2,37 @@
     "Drone": {
         "checkpoints": [
             {
-                "steps": 499936,
-                "file_path": "results/many-drones-1/Drone/Drone-499936.onnx",
-                "reward": 804.3820578257242,
-                "creation_time": 1748220866.763829,
+                "steps": 4999936,
+                "file_path": "results\\many-drones-1\\Drone\\Drone-4999936.onnx",
+                "reward": null,
+                "creation_time": 1748338795.3148434,
                 "auxillary_file_paths": [
-                    "results/many-drones-1/Drone/Drone-499936.pt"
+                    "results\\many-drones-1\\Drone\\Drone-4999936.pt"
                 ]
             },
             {
-                "steps": 501216,
-                "file_path": "results/many-drones-1/Drone/Drone-501216.onnx",
-                "reward": 804.3820578257242,
-                "creation_time": 1748220866.803141,
+                "steps": 5001216,
+                "file_path": "results\\many-drones-1\\Drone\\Drone-5001216.onnx",
+                "reward": null,
+                "creation_time": 1748338795.394808,
                 "auxillary_file_paths": [
-                    "results/many-drones-1/Drone/Drone-501216.pt"
+                    "results\\many-drones-1\\Drone\\Drone-5001216.pt"
                 ]
             }
         ],
         "final_checkpoint": {
-            "steps": 501216,
-            "file_path": "results/many-drones-1/Drone.onnx",
-            "reward": 804.3820578257242,
-            "creation_time": 1748220866.803141,
+            "steps": 5001216,
+            "file_path": "results\\many-drones-1\\Drone.onnx",
+            "reward": null,
+            "creation_time": 1748338795.394808,
             "auxillary_file_paths": [
-                "results/many-drones-1/Drone/Drone-501216.pt"
+                "results\\many-drones-1\\Drone\\Drone-5001216.pt"
             ]
         }
     },
     "metadata": {
         "stats_format_version": "0.3.0",
-        "mlagents_version": "1.1.0",
-        "torch_version": "2.7.0"
+        "mlagents_version": "0.26.0",
+        "torch_version": "1.10.2"
     }
 }

@@ -16,7 +16,7 @@ namespace MBaske
         [SerializeField]
         private float thrustScale = 50f;
         [SerializeField]
-        private float torqueScale = 5f;
+        private float torqueScale = 1.5f;
 
         [Header("Rotor Tilt (not used)")]
         [SerializeField]
