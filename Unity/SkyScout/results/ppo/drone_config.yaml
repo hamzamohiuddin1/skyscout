@@ -3,7 +3,7 @@ default_settings:
   hyperparameters:
     batch_size: 2048
     buffer_size: 20480
-    learning_rate: 0.0005
+    learning_rate: 0.0007
     beta: 0.01
     epsilon: 0.3
     lambd: 0.95

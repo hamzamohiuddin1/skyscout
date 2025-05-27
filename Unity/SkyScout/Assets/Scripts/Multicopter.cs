@@ -16,7 +16,7 @@ namespace MBaske
         [SerializeField]
         private float thrustScale = 50f;
         [SerializeField]
-        private float torqueScale = 5f;
+        private float torqueScale = 0.05f;
 
         [Header("Rotor Tilt (not used)")]
         [SerializeField]
@@ -63,10 +63,11 @@ namespace MBaske
         public void UpdateThrust(float[] thrustNorm)
         {
             float dt = Time.fixedDeltaTime;
+            float synchronizedThrust = thrustNorm[0];
 
             for (int i = 0; i < Rotors.Length; i++)
             {
-                Rotors[i].UpdateThrust(thrustNorm[i], dt);
+                Rotors[i].UpdateThrust(synchronizedThrust, dt);
             }
         }
 

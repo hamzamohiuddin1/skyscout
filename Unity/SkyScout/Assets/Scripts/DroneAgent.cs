@@ -74,22 +74,17 @@ namespace MBaske
 
         public override void OnActionReceived(ActionBuffers actionBuffers)
         {
-            multicopter.UpdateThrust(actionBuffers.ContinuousActions.Array);
+            // Only use the first action value for thrust
+            float thrust = actionBuffers.ContinuousActions[0];
+            float[] synchronizedThrust = new float[multicopter.Rotors.Length];
+            for (int i = 0; i < synchronizedThrust.Length; i++)
+            {
+                synchronizedThrust[i] = thrust;
+            }
+            multicopter.UpdateThrust(synchronizedThrust);
 
             if (bounds.Contains(transform.localPosition))
             {
-                // Reward for maintaining stability
-                AddReward(multicopter.Frame.up.y);
-                AddReward(multicopter.Rigidbody.linearVelocity.magnitude * -0.2f);
-                AddReward(multicopter.Rigidbody.angularVelocity.magnitude * -0.1f);
-
-                // Penalty for staying too close to the ground
-                float heightFromGround = transform.localPosition.y;
-                if (heightFromGround < 1.0f)
-                {
-                    AddReward(-0.1f * (1.0f - heightFromGround));
-                }
-
                 // Calculate horizontal and vertical distances separately
                 Vector3 horizontalDronePos = new Vector3(transform.localPosition.x, 0, transform.localPosition.z);
                 Vector3 horizontalGoalPos = new Vector3(_goal.localPosition.x, 0, _goal.localPosition.z);
@@ -98,12 +93,17 @@ namespace MBaske
 
                 // Higher penalty for vertical distance to encourage lifting
                 AddReward(-0.02f * horizontalDistanceToGoal);
-                AddReward(-0.05f * verticalDistanceToGoal);
+                //AddReward(-0.05f * verticalDistanceToGoal);
 
+                float heightFromGround = transform.localPosition.y;
+                AddReward(heightFromGround * 0.1f);
                 // Additional reward for maintaining height
                 if (heightFromGround > 1.0f)
                 {
-                    AddReward(0.01f);
+                    AddReward(multicopter.Frame.up.y);
+                    AddReward(multicopter.Rigidbody.linearVelocity.magnitude * -0.2f);
+                    AddReward(multicopter.Rigidbody.angularVelocity.magnitude * -0.1f);
+                    AddReward(0.03f);
                 }
             }
             else

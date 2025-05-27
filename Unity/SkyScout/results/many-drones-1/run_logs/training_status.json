@@ -1,32 +1,32 @@
 {
-    "Drone": {
+    "Drone Behavior New": {
         "checkpoints": [
             {
                 "steps": 499936,
-                "file_path": "results/many-drones-1/Drone/Drone-499936.onnx",
-                "reward": 804.3820578257242,
-                "creation_time": 1748220866.763829,
+                "file_path": "results/many-drones-1/Drone Behavior New/Drone Behavior New-499936.onnx",
+                "reward": -554.1491003781557,
+                "creation_time": 1748299009.779072,
                 "auxillary_file_paths": [
-                    "results/many-drones-1/Drone/Drone-499936.pt"
+                    "results/many-drones-1/Drone Behavior New/Drone Behavior New-499936.pt"
                 ]
             },
             {
                 "steps": 501216,
-                "file_path": "results/many-drones-1/Drone/Drone-501216.onnx",
-                "reward": 804.3820578257242,
-                "creation_time": 1748220866.803141,
+                "file_path": "results/many-drones-1/Drone Behavior New/Drone Behavior New-501216.onnx",
+                "reward": -554.1491003781557,
+                "creation_time": 1748299009.809986,
                 "auxillary_file_paths": [
-                    "results/many-drones-1/Drone/Drone-501216.pt"
+                    "results/many-drones-1/Drone Behavior New/Drone Behavior New-501216.pt"
                 ]
             }
         ],
         "final_checkpoint": {
             "steps": 501216,
-            "file_path": "results/many-drones-1/Drone.onnx",
-            "reward": 804.3820578257242,
-            "creation_time": 1748220866.803141,
+            "file_path": "results/many-drones-1/Drone Behavior New.onnx",
+            "reward": -554.1491003781557,
+            "creation_time": 1748299009.809986,
             "auxillary_file_paths": [
-                "results/many-drones-1/Drone/Drone-501216.pt"
+                "results/many-drones-1/Drone Behavior New/Drone Behavior New-501216.pt"
             ]
         }
     },
