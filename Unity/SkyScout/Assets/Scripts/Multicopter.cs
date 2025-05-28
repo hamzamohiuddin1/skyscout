@@ -10,13 +10,13 @@ namespace MBaske
         public Vector3 Inclination => new Vector3(Frame.right.y, Frame.up.y, Frame.forward.y);
 
         [SerializeField]
-        private bool reversableThrust = false;
+        private bool reversableThrust = true;
         [SerializeField]
-        private float thrustResponse = 40;
+        private float thrustResponse = 2;
         [SerializeField]
-        private float thrustScale = 50f;
+        private float thrustScale = 0.5f;
         [SerializeField]
-        private float torqueScale = 1.5f;
+        private float torqueScale = 0.1f;
 
         [Header("Rotor Tilt (not used)")]
         [SerializeField]

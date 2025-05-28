@@ -228,9 +228,9 @@ MonoBehaviour:
   - {fileID: 7197898891016711946}
   - {fileID: 7197898890073742800}
   reversableThrust: 0
-  thrustResponse: 100
-  thrustScale: 100
-  torqueScale: 100
+  thrustResponse: 5
+  thrustScale: 1
+  torqueScale: 0.2
   maxTiltAngle: 60
   pitch: 0
   roll: 0

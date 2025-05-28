@@ -65,8 +65,8 @@ namespace MBaske
                 sensor.AddObservation(rotor.CurrentThrust);
             }
 
-            Vector3 goalPos = _goal.localPosition;
-            Vector3 dronePos = transform.localPosition;
+            Vector3 goalPos = _goal.position;
+            Vector3 dronePos = multicopter.Frame.position;
 
             sensor.AddObservation(goalPos.x / environmentSize);
             sensor.AddObservation(goalPos.y / environmentSize);
@@ -83,25 +83,32 @@ namespace MBaske
 
             // Direction to goal in local drone coordinates (normalized vector)
             Vector3 directionToGoalWorld = (goalPos - dronePos).normalized;
-            Vector3 directionToGoalLocal = transform.InverseTransformDirection(directionToGoalWorld);
+            Vector3 directionToGoalLocal = multicopter.Frame.InverseTransformDirection(directionToGoalWorld);
             sensor.AddObservation(directionToGoalLocal);
         }
+
+        // Add this field at the top of the class
+        private int stepCounter = 0;
+        private const int logEvery = 100;  // <-- print every 100 Agent decisions
 
         public override void OnActionReceived(ActionBuffers actionBuffers)
         {
             float[] actions = actionBuffers.ContinuousActions.Array;
             multicopter.UpdateThrust(actions);
 
-            
-            Vector3 localPos = transform.localPosition;
+            Vector3 pos = multicopter.Frame.position;
+            Vector3 goalPos = _goal.position;
 
-            Vector3 dirToGoal = (_goal.localPosition - localPos).normalized;
-            Vector3 upVector = transform.up;
+            float totalDistance = Vector3.Distance(pos, goalPos);
+
+            Vector3 dirToGoal = (goalPos - pos).normalized;
+            Vector3 upVector = multicopter.Rigidbody.rotation * Vector3.up;
+
             Vector3 velocity = multicopter.Rigidbody.linearVelocity;
 
             float uprightReward = Vector3.Dot(upVector, Vector3.up);
 
-            float tiltAlignment = Vector3.Dot(upVector, -dirToGoal);
+            float tiltAlignment = Vector3.Dot(upVector, dirToGoal);
             tiltAlignment = Mathf.Max(tiltAlignment, 0f);
             if (uprightReward > 0.5f)
             {
@@ -114,19 +121,10 @@ namespace MBaske
 
             float velocityTowardsGoal = Vector3.Dot(velocity.normalized, dirToGoal);
 
-            Vector3 horizontalDronePos = new Vector3(localPos.x, 0f, localPos.z);
-            Vector3 horizontalGoalPos = new Vector3(_goal.localPosition.x, 0f, _goal.localPosition.z);
-            float horizontalDistance = Vector3.Distance(horizontalDronePos, horizontalGoalPos);
-            float verticalDistance = Mathf.Abs(localPos.y - _goal.localPosition.y);
-            float totalDistance = Vector3.Distance(localPos, _goal.localPosition);
-
-            float heightFromGround = localPos.y;
-
             float reward = 0f;
             // Distance penalties (scale down)
             // Note: instead of penalizing, try to reward it when the distance shrinks
-            reward += -0.05f * horizontalDistance;
-            reward += -0.05f * verticalDistance;
+            reward += -0.1f * totalDistance;
 
             // Positive incentives
             reward += 0.1f * uprightReward;
@@ -152,15 +150,14 @@ namespace MBaske
 
             // --- END NEW ---
             */
-            Vector3 goalPos = _goal.localPosition;
             float previousDistance = Vector3.Distance(previousPosition, goalPos);
-            float currentDistance = Vector3.Distance(transform.localPosition, goalPos);
+            float currentDistance = Vector3.Distance(pos, goalPos);
 
             float distanceDelta = previousDistance - currentDistance;
-            reward += distanceDelta * 0.1f - 0.1f;
+            reward += distanceDelta * 0.5f;
             AddReward(reward);
 
-            previousPosition = transform.localPosition;
+            previousPosition = pos;
             /*
 
             // Speed mismatch penalty (scale with distance)
@@ -179,6 +176,25 @@ namespace MBaske
             */
             // Time penalty
             AddReward(-0.005f);
+
+            /* ------------ LOGGING ------------ */
+            if (stepCounter % logEvery == 0)
+            {
+                Debug.Log(
+                    $"Step {StepCount} | " +
+                    $"Dist:{totalDistance:F2} | " +
+                    $"DronePos:{pos:F2} | " +
+                    $"GoalPos:{goalPos:F2} | " +
+                    $"Dist:{totalDistance:F2} | " +
+                    $"Δd:{distanceDelta:F3} | " +
+                    $"Vel:{velocity.magnitude:F2} " +
+                    $"(→Goal:{velocityTowardsGoal:F2}) | " +
+                    $"UpDot:{uprightReward:F2} | TiltAlign:{tiltAlignment:F2} | " +
+                    $"RewardThisStep:{reward:F3}"
+                );
+            }
+            stepCounter++;
+            /* ------------ END LOG ------------ */
         }
 
         private void OnTriggerEnter(Collider other)

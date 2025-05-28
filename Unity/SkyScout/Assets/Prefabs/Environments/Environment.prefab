@@ -755,10 +755,6 @@ PrefabInstance:
       propertyPath: m_DeterministicInference
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 928071570, guid: 9e56a1146fc84004e831ff03d475bd56, type: 3}
-      propertyPath: m_BrainParameters.VectorObservationSize
-      value: 19
-      objectReference: {fileID: 0}
     - target: {fileID: 3096198749483499493, guid: 9e56a1146fc84004e831ff03d475bd56, type: 3}
       propertyPath: m_LocalScale.x
       value: 2
@@ -816,20 +812,8 @@ PrefabInstance:
       value: DroneAgent
       objectReference: {fileID: 0}
     - target: {fileID: 6489964113541977420, guid: 9e56a1146fc84004e831ff03d475bd56, type: 3}
-      propertyPath: thrustScale
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 6489964113541977420, guid: 9e56a1146fc84004e831ff03d475bd56, type: 3}
-      propertyPath: torqueScale
-      value: 0.05
-      objectReference: {fileID: 0}
-    - target: {fileID: 6489964113541977420, guid: 9e56a1146fc84004e831ff03d475bd56, type: 3}
       propertyPath: maxTiltAngle
       value: 30
-      objectReference: {fileID: 0}
-    - target: {fileID: 6489964113541977420, guid: 9e56a1146fc84004e831ff03d475bd56, type: 3}
-      propertyPath: thrustResponse
-      value: 40
       objectReference: {fileID: 0}
     - target: {fileID: 6489964113541977420, guid: 9e56a1146fc84004e831ff03d475bd56, type: 3}
       propertyPath: reversableThrust

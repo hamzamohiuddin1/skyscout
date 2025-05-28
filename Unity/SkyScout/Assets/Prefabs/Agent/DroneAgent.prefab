@@ -71,7 +71,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_BrainParameters:
-    VectorObservationSize: 13
+    VectorObservationSize: 23
     NumStackedVectorObservations: 1
     m_ActionSpec:
       m_NumContinuousActions: 4
@@ -291,18 +291,6 @@ PrefabInstance:
     - target: {fileID: 1790737006296699270, guid: e2126116e44bc4148a0eb2037cfad038, type: 3}
       propertyPath: pitch
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1790737006296699270, guid: e2126116e44bc4148a0eb2037cfad038, type: 3}
-      propertyPath: thrustScale
-      value: 0.1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1790737006296699270, guid: e2126116e44bc4148a0eb2037cfad038, type: 3}
-      propertyPath: torqueScale
-      value: 0.05
-      objectReference: {fileID: 0}
-    - target: {fileID: 1790737006296699270, guid: e2126116e44bc4148a0eb2037cfad038, type: 3}
-      propertyPath: thrustResponse
-      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 1790737006296699270, guid: e2126116e44bc4148a0eb2037cfad038, type: 3}
       propertyPath: reversableThrust
