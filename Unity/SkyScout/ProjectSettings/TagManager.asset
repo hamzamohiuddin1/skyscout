@@ -6,6 +6,8 @@ TagManager:
   tags:
   - Wall
   - Goal
+  - Multicopter
+  - Terrain
   layers:
   - Default
   - TransparentFX

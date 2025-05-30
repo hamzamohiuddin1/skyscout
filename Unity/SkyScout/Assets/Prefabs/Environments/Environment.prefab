@@ -740,6 +740,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 6773396004348493573}
     - target: {fileID: 928071570, guid: 9e56a1146fc84004e831ff03d475bd56, type: 3}
+      propertyPath: m_Model
+      value: 
+      objectReference: {fileID: 5022602860645237092, guid: a9b802441ed3949668975a77b76aceb6, type: 3}
+    - target: {fileID: 928071570, guid: 9e56a1146fc84004e831ff03d475bd56, type: 3}
       propertyPath: m_Enabled
       value: 1
       objectReference: {fileID: 0}
@@ -811,6 +815,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: DroneAgent
       objectReference: {fileID: 0}
+    - target: {fileID: 5460330989814240865, guid: 9e56a1146fc84004e831ff03d475bd56, type: 3}
+      propertyPath: m_Mass
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6489964113541977420, guid: 9e56a1146fc84004e831ff03d475bd56, type: 3}
+      propertyPath: torqueScale
+      value: 0.5
+      objectReference: {fileID: 0}
     - target: {fileID: 6489964113541977420, guid: 9e56a1146fc84004e831ff03d475bd56, type: 3}
       propertyPath: maxTiltAngle
       value: 30
@@ -826,6 +838,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 3096198749483499495, guid: 9e56a1146fc84004e831ff03d475bd56, type: 3}
       insertIndex: -1
       addedObject: {fileID: 6773396004348493573}
+    - targetCorrespondingSourceObject: {fileID: 3096198749483499495, guid: 9e56a1146fc84004e831ff03d475bd56, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 8935713711902664434}
   m_SourcePrefab: {fileID: 100100000, guid: 9e56a1146fc84004e831ff03d475bd56, type: 3}
 --- !u!1 &3628581707034188001 stripped
 GameObject:
@@ -877,6 +892,29 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!136 &8935713711902664434
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3628581707034188001}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.25
+  m_Height: 0.25
+  m_Direction: 1
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!4 &3628581707034188003 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3096198749483499493, guid: 9e56a1146fc84004e831ff03d475bd56, type: 3}
