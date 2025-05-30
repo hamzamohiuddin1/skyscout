@@ -22,6 +22,8 @@ namespace MBaske
         private float lastHorizontalDistanceToGoal;
         private int noProgressSteps;
 
+        private string trainingStage = "takeoff"; // 'takeoff' | 'findTarget' | 'land'
+
         public override void Initialize()
         {
             multicopter.Initialize();
@@ -93,109 +95,122 @@ namespace MBaske
 
         public override void OnActionReceived(ActionBuffers actionBuffers)
         {
+            float totalReward = 0f;
             float[] actions = actionBuffers.ContinuousActions.Array;
             multicopter.UpdateThrust(actions);
 
             Vector3 pos = multicopter.Frame.position;
             Vector3 goalPos = _goal.position;
+            Rigidbody rb = multicopter.Rigidbody;
 
-            float totalDistance = Vector3.Distance(pos, goalPos);
-
-            Vector3 dirToGoal = (goalPos - pos).normalized;
-            Vector3 upVector = multicopter.Rigidbody.rotation * Vector3.up;
-
-            Vector3 velocity = multicopter.Rigidbody.linearVelocity;
-
-            float uprightReward = Vector3.Dot(upVector, Vector3.up);
-
-            float tiltAlignment = Vector3.Dot(upVector, dirToGoal);
-            tiltAlignment = Mathf.Max(tiltAlignment, 0f);
-            if (uprightReward > 0.5f)
+            switch (trainingStage)
             {
-                tiltAlignment *= uprightReward;
+                case "takeoff":
+                    if (rb.position.y > 1.5f)
+                    {
+                        totalReward += 1.0f;
+                        trainingStage = "findTarget";
+                    }
+                    else
+                    {
+                        totalReward = 0.1f * rb.linearVelocity.y;
+                    }
+                    break;
+
+                case "findTarget":
+                    if (Vector3.Distance(pos, goalPos) == 0f)
+                    {
+                        // Reward added in OnTriggerEnter
+                        trainingStage = "land";
+                        totalReward += 3.0f;
+                    }
+                    else
+                    {
+                        Vector3 dirToGoal = (goalPos - pos).normalized;
+                        Vector3 upVector = rb.rotation * Vector3.up;
+                        Vector3 velocity = rb.linearVelocity;
+
+                        float uprightReward = Vector3.Dot(upVector, Vector3.up);
+
+                        float tiltAlignment = Mathf.Max(0f, Vector3.Dot(upVector, dirToGoal));
+                        if (uprightReward > 0.5f)
+                        {
+                            tiltAlignment *= uprightReward;
+                        }
+                        else
+                        {
+                            tiltAlignment = 0f;
+                        }
+
+                        float velocityTowardsGoal = Vector3.Dot(velocity.normalized, dirToGoal);
+                        float totalDistance = Vector3.Distance(pos, goalPos);
+
+                        totalReward += -0.1f * totalDistance;
+                        totalReward += 0.1f * uprightReward;
+                        totalReward += 0.3f * tiltAlignment;
+                        totalReward += 0.2f * velocityTowardsGoal;
+
+                        float distanceDelta = Vector3.Distance(previousPosition, goalPos) - totalDistance;
+                        totalReward += distanceDelta * 0.5f;
+                        previousPosition = pos;
+
+                        totalReward -= 0.005f;
+                    }
+                    break;
+
+                case "land":
+                    if (rb.position.y < 0.1f)
+                    {
+                        trainingStage = "takeoff";
+                        totalReward += 2.0f;
+                        AddReward(totalReward);
+                        EndEpisode();
+                    }
+                    else
+                    {
+                        float descentReward = 0.1f * -rb.linearVelocity.y;
+                        float altitudePenalty = 0.1f * -rb.position.y;
+                        totalReward += descentReward + altitudePenalty;
+                    }
+                    break;
             }
-            else
-            {
-                tiltAlignment = 0f;
-            }
 
-            float velocityTowardsGoal = Vector3.Dot(velocity.normalized, dirToGoal);
-
-            float reward = 0f;
-            // Distance penalties (scale down)
-            // Note: instead of penalizing, try to reward it when the distance shrinks
-            reward += -0.1f * totalDistance;
-
-            // Positive incentives
-            reward += 0.1f * uprightReward;
-            reward += 0.3f * tiltAlignment;
-            reward += 0.2f * velocityTowardsGoal;
-            /*
-            // --- NEW: Inclination alignment reward ---
-
-            Vector3 horizontalDirToGoal = new Vector3(dirToGoal.x, 0f, dirToGoal.z).normalized;
-
-            // Goal direction projected onto drone's local right and forward vectors
-            float goalAlongRight = Vector3.Dot(horizontalDirToGoal, transform.right);
-            float goalAlongForward = Vector3.Dot(horizontalDirToGoal, transform.forward);
-
-            Vector3 inclination = multicopter.Inclination;  // (right.y, up.y, forward.y)
-            float inclinationRight = inclination.x;
-            float inclinationForward = inclination.z;
-
-            // Reward if inclination matches goal direction in horizontal plane
-            float inclinationAlignment = (inclinationRight * goalAlongRight) + (inclinationForward * goalAlongForward);
-
-            reward += inclinationAlignment;
-
-            // --- END NEW ---
-            */
-            float previousDistance = Vector3.Distance(previousPosition, goalPos);
-            float currentDistance = Vector3.Distance(pos, goalPos);
-
-            float distanceDelta = previousDistance - currentDistance;
-            reward += distanceDelta * 0.5f;
-            AddReward(reward);
-
-            previousPosition = pos;
-            /*
-
-            // Speed mismatch penalty (scale with distance)
-            float idealSpeed = 1f * totalDistance;
-            float speedMismatchPenalty = Mathf.Pow(velocity.magnitude - idealSpeed, 2) * (totalDistance / 5f);
-            reward += -0.1f * speedMismatchPenalty;
-
-            // Add total reward
-            AddReward(reward);
-
-            // Close to goal bonus
-            if (horizontalDistance < 0.5f && verticalDistance < 0.5f)
-            {
-                AddReward(5f);
-            }
-            */
-            // Time penalty
-            AddReward(-0.005f);
+            AddReward(totalReward);
 
             /* ------------ LOGGING ------------ */
             if (stepCounter % logEvery == 0)
             {
                 Debug.Log(
                     $"Step {StepCount} | " +
-                    $"Dist:{totalDistance:F2} | " +
                     $"DronePos:{pos:F2} | " +
                     $"GoalPos:{goalPos:F2} | " +
-                    $"Dist:{totalDistance:F2} | " +
-                    $"Δd:{distanceDelta:F3} | " +
-                    $"Vel:{velocity.magnitude:F2} " +
-                    $"(→Goal:{velocityTowardsGoal:F2}) | " +
-                    $"UpDot:{uprightReward:F2} | TiltAlign:{tiltAlignment:F2} | " +
-                    $"RewardThisStep:{reward:F3}"
+                    $"RewardThisStep:{totalReward:F3} | " +
+                    $"TrainingStage: {trainingStage}"
                 );
             }
+
             stepCounter++;
             /* ------------ END LOG ------------ */
         }
+
+            /* ------------ LOGGING ------------ */
+            // if (stepCounter % logEvery == 0)
+            // {
+            //     Debug.Log(
+            //         $"Step {StepCount} | " +
+            //         $"Dist:{totalDistance:F2} | " +
+            //         $"DronePos:{pos:F2} | " +
+            //         $"GoalPos:{goalPos:F2} | " +
+            //         $"Dist:{totalDistance:F2} | " +
+            //         $"Δd:{distanceDelta:F3} | " +
+            //         $"Vel:{velocity.magnitude:F2} " +
+            //         $"(→Goal:{velocityTowardsGoal:F2}) | " +
+            //         $"UpDot:{uprightReward:F2} | TiltAlign:{tiltAlignment:F2} | " +
+            //         $"RewardThisStep:{reward:F3}"
+            //     );
+            // }
+            // stepCounter++;
+            /* ------------ END LOG ------------ */
 
         private void OnTriggerEnter(Collider other)
         {

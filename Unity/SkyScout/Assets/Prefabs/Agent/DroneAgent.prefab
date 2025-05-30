@@ -53,7 +53,7 @@ MonoBehaviour:
   agentParameters:
     maxStep: 0
   hasUpgradedFromAgentParameters: 1
-  MaxStep: 1000
+  MaxStep: 1000000
   multicopter: {fileID: 6489964113541977420}
   _goal: {fileID: 0}
   _renderer: {fileID: 0}
