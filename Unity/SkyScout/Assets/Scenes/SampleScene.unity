@@ -1141,10 +1141,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 4808820155512255050, guid: a27c98268e9b54b50b597efba5bc699a, type: 3}
-      propertyPath: torqueScale
-      value: 0.1
-      objectReference: {fileID: 0}
     - target: {fileID: 7500600904106864049, guid: a27c98268e9b54b50b597efba5bc699a, type: 3}
       propertyPath: m_Name
       value: Environment

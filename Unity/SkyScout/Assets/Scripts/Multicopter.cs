@@ -12,15 +12,15 @@ namespace MBaske
         [SerializeField]
         private bool reversableThrust = true;
         [SerializeField]
-        private float thrustResponse = 2;
+        private float thrustResponse = 5;
         [SerializeField]
-        private float thrustScale = 0.5f;
+        private float thrustScale = 1f;
         [SerializeField]
-        private float torqueScale = 0.1f;
+        private float torqueScale = 0.2f;
 
         [Header("Rotor Tilt (not used)")]
         [SerializeField]
-        private float maxTiltAngle = 60;
+        private float maxTiltAngle = 30;
         [SerializeField, Range(-1f, 1f)]
         private float pitch;
         [SerializeField, Range(-1f, 1f)]

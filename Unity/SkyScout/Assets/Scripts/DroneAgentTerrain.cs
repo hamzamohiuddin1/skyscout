@@ -43,11 +43,11 @@ namespace MBaske
         private void SpawnObjects()
         {
             // Set drone position to (0, 2.34, -17)
-            transform.localPosition = new Vector3(0f, 2.34f, -17f);
+            transform.localPosition = new Vector3(0f, 20f, -17f);
             transform.localRotation = Quaternion.identity;
 
             // Set goal to fixed position (9, 3, -5)
-            _goal.localPosition = new Vector3(9f, 3f, -5f);
+            _goal.localPosition = new Vector3(13.0f, 7.0f, 4.39f);
         }
 
         public override void CollectObservations(VectorSensor sensor)
