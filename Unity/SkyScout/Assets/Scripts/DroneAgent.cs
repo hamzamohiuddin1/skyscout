@@ -15,6 +15,8 @@ namespace MBaske
         [SerializeField] private float environmentSize = 10f;
 
         private Vector3 previousPosition;
+        private float previousHeight = 0.0f;
+        private float previousHorizontalDist;
 
         private Bounds bounds;
         private Resetter resetter;
@@ -22,7 +24,7 @@ namespace MBaske
         private float lastHorizontalDistanceToGoal;
         private int noProgressSteps;
 
-        private string trainingStage = "takeoff"; // 'takeoff' | 'findTarget' | 'land'
+        private string trainingStage = "takeoff"; // 'takeoff' | 'findTarget' | 'descend'
 
         public override void Initialize()
         {
@@ -103,74 +105,125 @@ namespace MBaske
             Vector3 goalPos = _goal.position;
             Rigidbody rb = multicopter.Rigidbody;
 
+            Vector2 posXZ = new Vector2(pos.x, pos.z);
+            Vector2 goalXZ = new Vector2(goalPos.x, goalPos.z);
+
+            Vector3 upVector = rb.rotation * Vector3.up;
+            float angularVelocityPenalty = -0.1f * rb.angularVelocity.magnitude;
+
+            float horizontalDistance = Vector2.Distance(posXZ, goalXZ);
+            float horizontalProgress = previousHorizontalDist - horizontalDistance;
+
             switch (trainingStage)
             {
                 case "takeoff":
-                    if (rb.position.y > 1.5f)
+                    if (pos.y >= 3.9f)
                     {
-                        totalReward += 1.0f;
+                        totalReward += 2.0f;
                         trainingStage = "findTarget";
+
+                        previousHorizontalDist = Vector2.Distance(new Vector2(pos.x, pos.z), new Vector2(goalPos.x, goalPos.z));
                     }
                     else
                     {
-                        totalReward = 0.1f * rb.linearVelocity.y;
+                        // Encourage upward motion
+                        float heightDelta = pos.y - previousHeight;
+                        previousHeight = pos.y;
+
+                        float upwardVelocity = Mathf.Clamp(rb.linearVelocity.y, 0f, 1f);
+                        float upwardVelocityReward = 0.3f * upwardVelocity;
+
+                        // Uprightness: only reward if reasonably upright
+                        float uprightness = Vector3.Dot(rb.rotation * Vector3.up, Vector3.up);
+                        float uprightReward = Mathf.Clamp01(uprightness);
+
+                        // Small constant reward for climbing, penalize stagnation
+                        float heightProgressReward = Mathf.Max(0f, heightDelta * 2f);
+
+                        float timePenalty = -0.002f;
+
+                        totalReward += heightProgressReward + upwardVelocityReward + 0.1f * uprightReward + timePenalty;
+
+                        // Fail-safe (but don't kill reward too hard)
+                        if (StepCount > 400 && pos.y < 0.5f)
+                        {
+                            totalReward -= 0.5f;
+                            EndEpisode();
+                        }
                     }
                     break;
 
                 case "findTarget":
-                    if (Vector3.Distance(pos, goalPos) == 0f)
+                    bool isAboveTargetXZ = horizontalDistance < 0.5f;
+
+                    if (isAboveTargetXZ)
                     {
-                        // Reward added in OnTriggerEnter
-                        trainingStage = "land";
+                        trainingStage = "descend";
                         totalReward += 3.0f;
                     }
                     else
                     {
-                        Vector3 dirToGoal = (goalPos - pos).normalized;
-                        Vector3 upVector = rb.rotation * Vector3.up;
-                        Vector3 velocity = rb.linearVelocity;
+                        float lateralVelocity = new Vector2(rb.linearVelocity.x, rb.linearVelocity.z).magnitude;
+                        previousHorizontalDist = horizontalDistance;
 
-                        float uprightReward = Vector3.Dot(upVector, Vector3.up);
+                        float altitudePenalty = Mathf.Abs(pos.y - 4.0f) > 0.2f ? -0.2f : 0.1f;
+                        float uprightness = Vector3.Dot(upVector, Vector3.up);
 
-                        float tiltAlignment = Mathf.Max(0f, Vector3.Dot(upVector, dirToGoal));
-                        if (uprightReward > 0.5f)
-                        {
-                            tiltAlignment *= uprightReward;
-                        }
-                        else
-                        {
-                            tiltAlignment = 0f;
-                        }
-
-                        float velocityTowardsGoal = Vector3.Dot(velocity.normalized, dirToGoal);
-                        float totalDistance = Vector3.Distance(pos, goalPos);
-
-                        totalReward += -0.1f * totalDistance;
-                        totalReward += 0.1f * uprightReward;
-                        totalReward += 0.3f * tiltAlignment;
-                        totalReward += 0.2f * velocityTowardsGoal;
-
-                        float distanceDelta = Vector3.Distance(previousPosition, goalPos) - totalDistance;
-                        totalReward += distanceDelta * 0.5f;
-                        previousPosition = pos;
-
-                        totalReward -= 0.005f;
+                        totalReward += (0.5f * horizontalProgress) + (0.2f * lateralVelocity) + altitudePenalty + angularVelocityPenalty;
+                        totalReward += uprightness > 0.9f ? 0.05f : -0.05f;
+                        totalReward -= 0.01f; // time penalty
                     }
                     break;
 
-                case "land":
-                    if (rb.position.y < 0.1f)
+                case "descend":
+                    Vector3 droneToGoal = goalPos - pos;
+                    float distToGoal = droneToGoal.magnitude;
+
+                    // Penalty for moving sideways
+                    Vector2 horizontalVelocity = new Vector2(rb.linearVelocity.x, rb.linearVelocity.z);
+                    float lateralPenalty = -0.4f * horizontalVelocity.magnitude;
+
+                    // Reward for moving down (but not too fast) if above goal, else penalty for moving down
+                    bool isAboveGoal = pos.y > goalPos.y + 0.3f;
+                    float downwardVelocity = isAboveGoal ? Mathf.Clamp(rb.linearVelocity.y, 0f, 1f) : Mathf.Clamp(-rb.linearVelocity.y, 0f, 1f);
+                    float descentReward = isAboveGoal ? 0.3f * downwardVelocity : -0.3f * downwardVelocity;
+
+                    // Reward being close to horizontal alignment with the goal
+                    float alignmentReward = horizontalDistance < 0.3f ? -0.3f : 0.1f;
+
+                    // Penalty if far off-course
+                    if (horizontalDistance > 0.6f)
                     {
-                        trainingStage = "takeoff";
-                        totalReward += 2.0f;
-                        AddReward(totalReward);
-                        EndEpisode();
+                        totalReward -= 1.0f;
+                        // EndEpisode(); // You can enable this if you want a hard fail
+                    }
+
+                    // Reward getting back on course
+                    previousHorizontalDist = horizontalDistance;
+
+                    if (horizontalProgress > 0)
+                    {
+                        totalReward += 0.3f * horizontalProgress;
                     }
                     else
                     {
-                        float descentReward = 0.1f * -rb.linearVelocity.y;
-                        float altitudePenalty = 0.1f * -rb.position.y;
-                        totalReward += descentReward + altitudePenalty;
+                        totalReward += 0.1f * horizontalProgress; // smaller penalty if regressing
+                    }
+
+                    totalReward += descentReward + lateralPenalty + alignmentReward;
+
+                    // Check if fully arrived at the goal (within small 3D range and mostly stopped)
+                    if (distToGoal < 0.5f && Mathf.Abs(rb.linearVelocity.y) < 0.3f && rb.linearVelocity.magnitude < 1.0f)
+                    {
+                        totalReward += 3.0f;
+                        EndEpisode();
+                    }
+
+                    // Fail-safe to stop very long descents
+                    if (StepCount > 600)
+                    {
+                        totalReward -= 1.0f;
+                        EndEpisode();
                     }
                     break;
             }
@@ -183,6 +236,7 @@ namespace MBaske
                 Debug.Log(
                     $"Step {StepCount} | " +
                     $"DronePos:{pos:F2} | " +
+                    $"DronePos(RB):{rb.position:F2} | " +
                     $"GoalPos:{goalPos:F2} | " +
                     $"RewardThisStep:{totalReward:F3} | " +
                     $"TrainingStage: {trainingStage}"
