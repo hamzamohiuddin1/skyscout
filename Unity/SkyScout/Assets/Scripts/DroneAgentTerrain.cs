@@ -228,7 +228,7 @@ namespace MBaske
                     $"Vel:{velocity.magnitude:F2} " +
                     $"(→Goal:{velocityTowardsGoal:F2}) | " +
                     $"UpDot:{uprightReward:F2} | TiltAlign:{tiltAlignment:F2} | " +
-                    $"RewardThisStep:{reward:F3}"
+                    $"RewardThisStep:{reward:F3}" +     
                     $" | Alt:{droneAltitude:F2} | GroundPenalty:{groundPenalty:F3}"
                 );
             }
