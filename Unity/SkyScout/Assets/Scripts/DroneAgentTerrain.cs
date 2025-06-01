@@ -14,6 +14,8 @@ namespace MBaske
         [SerializeField] private Renderer _renderer;
         [SerializeField] private float environmentSize = 10f;
 
+        public MeshCollider terrainMeshCollider;// Assign this in the Inspector
+
         private Vector3 previousPosition;
 
         private Bounds bounds;
@@ -40,14 +42,43 @@ namespace MBaske
             noProgressSteps = 0;
         }
 
+        
+        public float minX = -20f, maxX = 20f;
+        public float minZ = -20f, maxZ = 20f;
+
         private void SpawnObjects()
         {
-            // Set drone position to (0, 2.34, -17)
-            transform.localPosition = new Vector3(0f, 20f, -17f);
+            // Reset drone
+            transform.localPosition = new Vector3(0f, 4f, -17f);
             transform.localRotation = Quaternion.identity;
 
-            // Set goal to fixed position (9, 3, -5)
-            _goal.localPosition = new Vector3(13.0f, 7.0f, 4.39f);
+            // Random XZ position
+            float randX = Random.Range(minX, maxX);
+            float randZ = Random.Range(minZ, maxZ);
+
+            float goalY = 10f; // Default fallback height
+
+            if (terrainMeshCollider != null)
+            {
+                Vector3 rayOrigin = new Vector3(randX, 100f, randZ); // Cast from above
+                Ray ray = new Ray(rayOrigin, Vector3.down);
+
+                if (terrainMeshCollider.Raycast(ray, out RaycastHit hit, 200f))
+                {
+                    goalY = hit.point.y + 2f; // Hover 2 units above terrain
+                }
+                else
+                {
+                    Debug.LogWarning("Raycast missed terrain. Goal may float.");
+                }
+            }
+            else
+            {
+                Debug.LogWarning("Terrain mesh collider not assigned.");
+            }
+
+            // Set goal position
+            _goal.localPosition = new Vector3(randX, goalY, randZ);
         }
 
         public override void CollectObservations(VectorSensor sensor)
@@ -83,6 +114,21 @@ namespace MBaske
             Vector3 directionToGoalWorld = (goalPos - dronePos).normalized;
             Vector3 directionToGoalLocal = multicopter.Frame.InverseTransformDirection(directionToGoalWorld);
             sensor.AddObservation(directionToGoalLocal);
+
+            float terrainHeight = 0f;
+            float altitude = 0f;
+            if (Physics.Raycast(dronePos, Vector3.down, out RaycastHit hitInfo, 100f))
+            {
+                if (hitInfo.collider.gameObject.CompareTag("Terrain")) // Optional
+                {
+                    terrainHeight = hitInfo.point.y;
+                    altitude = dronePos.y - terrainHeight;
+                }
+            }
+
+            float maxAltitude = environmentSize; // or use 50f, etc.
+            float normalizedAltitude = Mathf.Clamp01(altitude / maxAltitude);
+            sensor.AddObservation(normalizedAltitude);
         }
 
         // Add this field at the top of the class
@@ -135,7 +181,6 @@ namespace MBaske
             reward += -0.1f * totalDistance;
 
             // Positive incentives
-            reward += 0.3f * tiltAlignment;
             reward += 0.2f * velocityTowardsGoal;
 
             float previousDistance = Vector3.Distance(previousPosition, goalPos);
@@ -146,6 +191,26 @@ namespace MBaske
             AddReward(reward);
 
             previousPosition = pos;
+
+            float droneAltitude = 0f;
+            if (Physics.Raycast(pos, Vector3.down, out RaycastHit hitInfo, 100f))
+            {
+                // Check if hit terrain
+                if (hitInfo.collider.gameObject.CompareTag("Terrain")) // Optional tag check
+                {
+                    float groundY = hitInfo.point.y;
+                    droneAltitude = pos.y - groundY;
+                }
+            }
+
+            float minSafeAltitude = 5.0f; // Minimum safe altitude above terrain
+            float groundPenalty = 0f;
+
+            if (droneAltitude < minSafeAltitude)
+            {
+                groundPenalty = -0.1f * (minSafeAltitude - droneAltitude);
+                reward += groundPenalty;
+            }
 
             // Time penalty
             AddReward(-0.005f);
@@ -164,6 +229,7 @@ namespace MBaske
                     $"(→Goal:{velocityTowardsGoal:F2}) | " +
                     $"UpDot:{uprightReward:F2} | TiltAlign:{tiltAlignment:F2} | " +
                     $"RewardThisStep:{reward:F3}"
+                    $" | Alt:{droneAltitude:F2} | GroundPenalty:{groundPenalty:F3}"
                 );
             }
             stepCounter++;

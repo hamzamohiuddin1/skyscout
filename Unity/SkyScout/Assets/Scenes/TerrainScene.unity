@@ -263,6 +263,11 @@ MonoBehaviour:
   _goal: {fileID: 440902769}
   _renderer: {fileID: 105525333}
   environmentSize: 100
+  terrain: {fileID: 0}
+  minX: -20
+  maxX: 20
+  minZ: -20
+  maxZ: 20
 --- !u!1001 &184791069
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -648,7 +653,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5243438900246910808, guid: 1f7905a096b766e41a11118a5b6df58d, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1.5
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 5243438900246910808, guid: 1f7905a096b766e41a11118a5b6df58d, type: 3}
       propertyPath: m_LocalPosition.z

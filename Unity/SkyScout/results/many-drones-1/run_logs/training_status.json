@@ -1,7 +1,38 @@
 {
+    "Drone Behavior": {
+        "checkpoints": [
+            {
+                "steps": 4999884,
+                "file_path": "results\\many-drones-1\\Drone Behavior\\Drone Behavior-4999884.onnx",
+                "reward": -1166.5137907663982,
+                "creation_time": 1748695264.7544608,
+                "auxillary_file_paths": [
+                    "results\\many-drones-1\\Drone Behavior\\Drone Behavior-4999884.pt"
+                ]
+            },
+            {
+                "steps": 5000128,
+                "file_path": "results\\many-drones-1\\Drone Behavior\\Drone Behavior-5000128.onnx",
+                "reward": -1164.8148434613202,
+                "creation_time": 1748695265.3664858,
+                "auxillary_file_paths": [
+                    "results\\many-drones-1\\Drone Behavior\\Drone Behavior-5000128.pt"
+                ]
+            }
+        ],
+        "final_checkpoint": {
+            "steps": 5000128,
+            "file_path": "results\\many-drones-1\\Drone Behavior.onnx",
+            "reward": -1164.8148434613202,
+            "creation_time": 1748695265.3664858,
+            "auxillary_file_paths": [
+                "results\\many-drones-1\\Drone Behavior\\Drone Behavior-5000128.pt"
+            ]
+        }
+    },
     "metadata": {
         "stats_format_version": "0.3.0",
-        "mlagents_version": "1.1.0",
-        "torch_version": "2.7.0"
+        "mlagents_version": "0.26.0",
+        "torch_version": "1.10.2"
     }
 }
