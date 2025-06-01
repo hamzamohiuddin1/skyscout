@@ -43,11 +43,46 @@ namespace MBaske
         private void SpawnObjects()
         {
             // Set drone position to (0, 2.34, -17)
-            transform.localPosition = new Vector3(0f, 20f, -17f);
+            transform.localPosition = new Vector3(20f, 4.1f, 0.0f);
             transform.localRotation = Quaternion.identity;
 
-            // Set goal to fixed position (9, 3, -5)
-            _goal.localPosition = new Vector3(13.0f, 7.0f, 4.39f);
+            // Find a random position on the terrain
+            bool foundValidPosition = false;
+            int maxAttempts = 10;
+            int attempts = 0;
+            Vector3 goalPosition = Vector3.zero;
+
+            while (!foundValidPosition && attempts < maxAttempts)
+            {
+                // Random position within bounds
+                float randomX = Random.Range(-environmentSize/2, environmentSize/2);
+                float randomZ = Random.Range(-environmentSize/2, environmentSize/2);
+                
+                // Start raycast from high above the terrain
+                Vector3 rayStart = new Vector3(randomX, 100f, randomZ);
+                RaycastHit hit;
+                
+                // Cast ray downward to find terrain
+                if (Physics.Raycast(rayStart, Vector3.down, out hit, 200f, LayerMask.GetMask("Default")))
+                {
+                    if (hit.collider.CompareTag("Terrain"))
+                    {
+                        // Place goal slightly above the terrain surface
+                        goalPosition = hit.point + Vector3.up * 1.0f; // 1 unit above terrain
+                        foundValidPosition = true;
+                    }
+                }
+                attempts++;
+            }
+
+            // If we couldn't find a valid position, use a default position
+            if (!foundValidPosition)
+            {
+                Debug.LogWarning("Could not find valid terrain position for goal, using default position");
+                goalPosition = new Vector3(13.0f, 7.0f, 4.39f);
+            }
+
+            _goal.localPosition = goalPosition;
         }
 
         public override void CollectObservations(VectorSensor sensor)

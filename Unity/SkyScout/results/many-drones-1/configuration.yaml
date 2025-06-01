@@ -68,7 +68,7 @@ environment_parameters: null
 checkpoint_settings:
   run_id: many-drones-1
   initialize_from: null
-  load_model: false
+  load_model: true
   resume: false
   force: true
   train_model: false
