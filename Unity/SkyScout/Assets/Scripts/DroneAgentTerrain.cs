@@ -12,7 +12,7 @@ namespace MBaske
 
         [SerializeField] private Transform _goal;
         [SerializeField] private Renderer _renderer;
-        [SerializeField] private float environmentSize = 10f;
+        [SerializeField] private float environmentSize = 22f;
 
         private Vector3 previousPosition;
 
@@ -22,8 +22,11 @@ namespace MBaske
         private float lastHorizontalDistanceToGoal;
         private int noProgressSteps;
 
+        private Rigidbody rb;
+
         public override void Initialize()
         {
+            rb = GetComponent<Rigidbody>();
             multicopter.Initialize();
             bounds = new Bounds(Vector3.zero, Vector3.one * environmentSize);
             resetter = new Resetter(transform);
@@ -42,6 +45,10 @@ namespace MBaske
 
         private void SpawnObjects()
         {
+
+            rb.linearVelocity = Vector3.zero;
+            rb.angularVelocity = Vector3.zero;
+
             // Set drone position to (0, 2.34, -17)
             transform.localPosition = new Vector3(20f, 4.1f, 0.0f);
             transform.localRotation = Quaternion.identity;
@@ -152,25 +159,25 @@ namespace MBaske
                 AddReward(0.1f * uprightReward);
             }
 
-            float tiltAlignment = Vector3.Dot(upVector, dirToGoal);
-            tiltAlignment = Mathf.Max(tiltAlignment, 0f);
-            if (uprightReward > 0.5f)
-            {
-                tiltAlignment *= uprightReward;
-            }
-            else
-            {
-                tiltAlignment = 0f;
-            }
+            // float tiltAlignment = Vector3.Dot(upVector, dirToGoal);
+            // tiltAlignment = Mathf.Max(tiltAlignment, 0f);
+            // if (uprightReward > 0.5f)
+            // {
+            //     tiltAlignment *= uprightReward;
+            // }
+            // else
+            // {
+            //     tiltAlignment = 0f;
+            // }
 
             float velocityTowardsGoal = Vector3.Dot(velocity.normalized, dirToGoal);
 
             float reward = 0f;
             // Distance penalties (scale down)
-            reward += -0.1f * totalDistance;
+            reward += -0.05f * totalDistance;
 
             // Positive incentives
-            reward += 0.3f * tiltAlignment;
+            // reward += 0.3f * tiltAlignment;
             reward += 0.2f * velocityTowardsGoal;
 
             float previousDistance = Vector3.Distance(previousPosition, goalPos);
@@ -197,7 +204,7 @@ namespace MBaske
                     $"Δd:{distanceDelta:F3} | " +
                     $"Vel:{velocity.magnitude:F2} " +
                     $"(→Goal:{velocityTowardsGoal:F2}) | " +
-                    $"UpDot:{uprightReward:F2} | TiltAlign:{tiltAlignment:F2} | " +
+                    $"UpDot:{uprightReward:F2} | " +
                     $"RewardThisStep:{reward:F3}"
                 );
             }
@@ -209,7 +216,7 @@ namespace MBaske
         {
             if (other.gameObject.CompareTag("Goal"))
             {
-                AddReward(3.0f); // Increased reward for success
+                AddReward(10.0f); // Increased reward for success
                 EndEpisode();
             }
         }

@@ -4,7 +4,7 @@ behaviors:
     trainer_type: ppo
     hyperparameters:
       batch_size: 1024
-      buffer_size: 20480
+      buffer_size: 102400
       learning_rate: 0.001
       beta: 0.005
       epsilon: 0.2
@@ -17,7 +17,7 @@ behaviors:
     checkpoint_interval: 5000000
     network_settings:
       normalize: false
-      hidden_units: 128
+      hidden_units: 512
       num_layers: 2
       vis_encode_type: simple
       memory: null
@@ -62,7 +62,7 @@ engine_settings:
   time_scale: 20.0
   target_frame_rate: -1
   capture_frame_rate: 60
-  no_graphics: true
+  no_graphics: false
   no_graphics_monitor: false
 environment_parameters: null
 checkpoint_settings:
