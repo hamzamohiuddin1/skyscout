@@ -49,36 +49,29 @@ namespace MBaske
         private void SpawnObjects()
         {
             // Reset drone
-            transform.localPosition = new Vector3(0f, 4f, -17f);
+            transform.localPosition = new Vector3(20f, 4f, 0f);
             transform.localRotation = Quaternion.identity;
 
             // Random XZ position
             float randX = Random.Range(minX, maxX);
             float randZ = Random.Range(minZ, maxZ);
 
-            float goalY = 10f; // Default fallback height
-
-            if (terrainMeshCollider != null)
+            Vector3 rayOrigin = new Vector3(randX, 100f, randZ);
+            if (Physics.Raycast(rayOrigin, Vector3.down, out RaycastHit hitInfo, 200f))
             {
-                Vector3 rayOrigin = new Vector3(randX, 100f, randZ); // Cast from above
-                Ray ray = new Ray(rayOrigin, Vector3.down);
-
-                if (terrainMeshCollider.Raycast(ray, out RaycastHit hit, 200f))
+                if (hitInfo.collider.gameObject.CompareTag("Terrain"))
                 {
-                    goalY = hit.point.y + 2f; // Hover 2 units above terrain
-                }
-                else
-                {
-                    Debug.LogWarning("Raycast missed terrain. Goal may float.");
+                    float slope = Vector3.Angle(hitInfo.normal, Vector3.up);
+                    if (slope < 45f) // Acceptable slope
+                    {
+                        _goal.localPosition = hitInfo.point + hitInfo.normal * 2.0f;
+                        return;
+                    }
                 }
             }
-            else
-            {
-                Debug.LogWarning("Terrain mesh collider not assigned.");
-            }
 
-            // Set goal position
-            _goal.localPosition = new Vector3(randX, goalY, randZ);
+            // Fallback position if no valid hit
+            _goal.localPosition = new Vector3(randX, 16f, randZ);
         }
 
         public override void CollectObservations(VectorSensor sensor)
@@ -188,10 +181,9 @@ namespace MBaske
 
             float distanceDelta = previousDistance - currentDistance;
             reward += distanceDelta * 0.5f;
-            AddReward(reward);
 
             previousPosition = pos;
-
+            /*
             float droneAltitude = 0f;
             if (Physics.Raycast(pos, Vector3.down, out RaycastHit hitInfo, 100f))
             {
@@ -208,10 +200,33 @@ namespace MBaske
 
             if (droneAltitude < minSafeAltitude)
             {
-                groundPenalty = -0.1f * (minSafeAltitude - droneAltitude);
+                groundPenalty = -0.2f * (minSafeAltitude - droneAltitude);
                 reward += groundPenalty;
             }
+            */
 
+            // === Obstacle avoidance + climb encouragement ===
+            bool frontBlocked = false;
+            float forwardObstacleDist = 0f;
+
+            Vector3 directionToGoal = (goalPos - pos).normalized;
+            if (Physics.Raycast(pos, directionToGoal, out RaycastHit wallHit, 3f))
+            {
+                if (wallHit.collider.CompareTag("Terrain"))
+                {
+                    frontBlocked = true;
+                    forwardObstacleDist = wallHit.distance;
+                }
+            }
+
+            float climbReward = 0f;
+            if (frontBlocked && distanceDelta < 0.01f)
+            {
+                float upwardVelocity = Mathf.Max(0f, velocity.y);
+                climbReward = 0.1f * upwardVelocity;
+                reward += climbReward;
+            }
+            AddReward(reward);
             // Time penalty
             AddReward(-0.005f);
 
@@ -227,9 +242,8 @@ namespace MBaske
                     $"Δd:{distanceDelta:F3} | " +
                     $"Vel:{velocity.magnitude:F2} " +
                     $"(→Goal:{velocityTowardsGoal:F2}) | " +
-                    $"UpDot:{uprightReward:F2} | TiltAlign:{tiltAlignment:F2} | " +
-                    $"RewardThisStep:{reward:F3}" +     
-                    $" | Alt:{droneAltitude:F2} | GroundPenalty:{groundPenalty:F3}"
+                    $"UpDot:{uprightReward:F2} | ClimbReward:{climbReward:F2} | " +
+                    $"RewardThisStep:{reward:F3}"
                 );
             }
             stepCounter++;

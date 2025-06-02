@@ -1,32 +1,32 @@
 {
-    "Drone Behavior": {
+    "Drone": {
         "checkpoints": [
             {
-                "steps": 4999884,
-                "file_path": "results\\many-drones-1\\Drone Behavior\\Drone Behavior-4999884.onnx",
-                "reward": -1166.5137907663982,
-                "creation_time": 1748695264.7544608,
+                "steps": 4999896,
+                "file_path": "results\\many-drones-1\\Drone\\Drone-4999896.onnx",
+                "reward": -361.99224444230396,
+                "creation_time": 1748857690.9037068,
                 "auxillary_file_paths": [
-                    "results\\many-drones-1\\Drone Behavior\\Drone Behavior-4999884.pt"
+                    "results\\many-drones-1\\Drone\\Drone-4999896.pt"
                 ]
             },
             {
-                "steps": 5000128,
-                "file_path": "results\\many-drones-1\\Drone Behavior\\Drone Behavior-5000128.onnx",
-                "reward": -1164.8148434613202,
-                "creation_time": 1748695265.3664858,
+                "steps": 5000512,
+                "file_path": "results\\many-drones-1\\Drone\\Drone-5000512.onnx",
+                "reward": -319.8506638109684,
+                "creation_time": 1748857691.5875661,
                 "auxillary_file_paths": [
-                    "results\\many-drones-1\\Drone Behavior\\Drone Behavior-5000128.pt"
+                    "results\\many-drones-1\\Drone\\Drone-5000512.pt"
                 ]
             }
         ],
         "final_checkpoint": {
-            "steps": 5000128,
-            "file_path": "results\\many-drones-1\\Drone Behavior.onnx",
-            "reward": -1164.8148434613202,
-            "creation_time": 1748695265.3664858,
+            "steps": 5000512,
+            "file_path": "results\\many-drones-1\\Drone.onnx",
+            "reward": -319.8506638109684,
+            "creation_time": 1748857691.5875661,
             "auxillary_file_paths": [
-                "results\\many-drones-1\\Drone Behavior\\Drone Behavior-5000128.pt"
+                "results\\many-drones-1\\Drone\\Drone-5000512.pt"
             ]
         }
     },
