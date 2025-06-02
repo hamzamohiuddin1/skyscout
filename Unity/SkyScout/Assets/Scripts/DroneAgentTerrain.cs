@@ -2,17 +2,28 @@ using UnityEngine;
 using Unity.MLAgents;
 using Unity.MLAgents.Sensors;
 using Unity.MLAgents.Actuators;
+using System.Linq;
 
 namespace MBaske
 {
     public class DroneAgentTerrain : Agent
     {
+
+        // [Header("Heuristic Obstacle Avoidance")]
+        // [SerializeField]
+        // private float avoidRayLength = 5f;
+        // [SerializeField]
+        // private float avoidYawTurnAngle = 20f;
+        // [SerializeField]
+        // private string[] detectableTags = new[] { "Terrain", "Wall" };
+
+
         [SerializeField]
         private Multicopter multicopter;
 
         [SerializeField] private Transform _goal;
         [SerializeField] private Renderer _renderer;
-        [SerializeField] private float environmentSize = 22f;
+        [SerializeField] private float environmentSize = 50f;
 
         private Vector3 previousPosition;
 
@@ -31,6 +42,73 @@ namespace MBaske
             bounds = new Bounds(Vector3.zero, Vector3.one * environmentSize);
             resetter = new Resetter(transform);
         }
+
+
+        // private void HeuristicAvoidance(ref float[] thrusts)
+        // {
+        //     // 1) Ray origins & directions
+        //     Vector3 origin = multicopter.Frame.position;
+        //     Vector3 forward = multicopter.Frame.forward;
+        //     Vector3 back = -forward;
+        //     Vector3 upDir = multicopter.Frame.up;
+        //     Vector3 downDir = -upDir;
+
+        //     // 2) Cast each primary direction with the same length
+        //     bool hitFront = Physics.Raycast(origin, forward, out RaycastHit frontHit, avoidRayLength);
+        //     bool hitBack = Physics.Raycast(origin, back, out RaycastHit backHit, avoidRayLength);
+        //     bool hitUp = Physics.Raycast(origin, upDir, out RaycastHit upHit, avoidRayLength);
+        //     bool hitDown = Physics.Raycast(origin, downDir, out RaycastHit downHit, avoidRayLength);
+
+        //     // Helper to check tags quickly
+        //     bool IsBad(RaycastHit h)
+        //         => h.collider != null && detectableTags.Contains(h.collider.tag);
+
+        //     // 3) Vertical avoidance: if ground (down) is too close, boost upward
+        //     if (hitDown && IsBad(downHit))
+        //     {
+        //         // Add a small upward thrust tweak on all four motors
+        //         float liftKick = 0.1f;
+        //         for (int i = 0; i < thrusts.Length; i++)
+        //             thrusts[i] = Mathf.Clamp(thrusts[i] + liftKick, 0f, 1f);
+
+        //         // Skip other avoidance this frame
+        //         return;
+        //     }
+
+        //     // 4) Ceiling avoidance: if an overhang is too close above, push down (reduce thrust)
+        //     if (hitUp && IsBad(upHit))
+        //     {
+        //         float dropKick = 0.1f;
+        //         for (int i = 0; i < thrusts.Length; i++)
+        //             thrusts[i] = Mathf.Clamp(thrusts[i] - dropKick, 0f, 1f);
+        //         // Skip horizontal avoidance this frame
+        //         return;
+        //     }
+
+        //     // 5) Horizontal avoidance:
+        //     if (hitFront && IsBad(frontHit))
+        //     {
+        //         // yaw-right: decrease left motors (0 & 2), increase right (1 & 3)
+        //         float yawKick = avoidYawTurnAngle / 100f;
+        //         thrusts[0] = Mathf.Clamp(thrusts[0] - yawKick, 0f, 1f);
+        //         thrusts[2] = Mathf.Clamp(thrusts[2] - yawKick, 0f, 1f);
+        //         thrusts[1] = Mathf.Clamp(thrusts[1] + yawKick, 0f, 1f);
+        //         thrusts[3] = Mathf.Clamp(thrusts[3] + yawKick, 0f, 1f);
+        //         return;
+        //     }
+        //     if (hitBack && IsBad(backHit))
+        //     {
+        //         // yaw-left: decrease right motors, increase left
+        //         float yawKick = avoidYawTurnAngle / 100f;
+        //         thrusts[1] = Mathf.Clamp(thrusts[1] - yawKick, 0f, 1f);
+        //         thrusts[3] = Mathf.Clamp(thrusts[3] - yawKick, 0f, 1f);
+        //         thrusts[0] = Mathf.Clamp(thrusts[0] + yawKick, 0f, 1f);
+        //         thrusts[2] = Mathf.Clamp(thrusts[2] + yawKick, 0f, 1f);
+        //         return;
+        //     }
+        //     // If no hits, do nothing—keep the network’s original thrusts
+        // }
+
 
         public override void OnEpisodeBegin()
         {
@@ -62,13 +140,13 @@ namespace MBaske
             while (!foundValidPosition && attempts < maxAttempts)
             {
                 // Random position within bounds
-                float randomX = Random.Range(-environmentSize/2, environmentSize/2);
-                float randomZ = Random.Range(-environmentSize/2, environmentSize/2);
-                
+                float randomX = Random.Range(-environmentSize / 2, environmentSize / 2);
+                float randomZ = Random.Range(-environmentSize / 2, environmentSize / 2);
+
                 // Start raycast from high above the terrain
                 Vector3 rayStart = new Vector3(randomX, 100f, randomZ);
                 RaycastHit hit;
-                
+
                 // Cast ray downward to find terrain
                 if (Physics.Raycast(rayStart, Vector3.down, out hit, 200f, LayerMask.GetMask("Default")))
                 {
@@ -133,7 +211,15 @@ namespace MBaske
 
         public override void OnActionReceived(ActionBuffers actionBuffers)
         {
+
+            if (!bounds.Contains(multicopter.Frame.position)){
+                AddReward(-2.0f); // Penalty for going out of bounds
+                EndEpisode();
+                return; // Important to stop further processing for this step
+            }
+
             float[] actions = actionBuffers.ContinuousActions.Array;
+            // HeuristicAvoidance(ref actions);
             multicopter.UpdateThrust(actions);
 
             Vector3 pos = multicopter.Frame.position;
@@ -158,6 +244,8 @@ namespace MBaske
             {
                 AddReward(0.1f * uprightReward);
             }
+
+            
 
             // float tiltAlignment = Vector3.Dot(upVector, dirToGoal);
             // tiltAlignment = Mathf.Max(tiltAlignment, 0f);
