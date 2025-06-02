@@ -2,22 +2,22 @@
     "Drone": {
         "checkpoints": [
             {
-                "steps": 11518,
-                "file_path": "results\\raytrace-1\\Drone\\Drone-11518.onnx",
-                "reward": -655.4537340489829,
-                "creation_time": 1748813460.4341629,
+                "steps": 326807,
+                "file_path": "results\\raytrace-1\\Drone\\Drone-326807.onnx",
+                "reward": -643.7343579910989,
+                "creation_time": 1748815331.6459575,
                 "auxillary_file_paths": [
-                    "results\\raytrace-1\\Drone\\Drone-11518.pt"
+                    "results\\raytrace-1\\Drone\\Drone-326807.pt"
                 ]
             }
         ],
         "final_checkpoint": {
-            "steps": 11518,
+            "steps": 326807,
             "file_path": "results\\raytrace-1\\Drone.onnx",
-            "reward": -655.4537340489829,
-            "creation_time": 1748813460.4341629,
+            "reward": -643.7343579910989,
+            "creation_time": 1748815331.6459575,
             "auxillary_file_paths": [
-                "results\\raytrace-1\\Drone\\Drone-11518.pt"
+                "results\\raytrace-1\\Drone\\Drone-326807.pt"
             ]
         }
     },
