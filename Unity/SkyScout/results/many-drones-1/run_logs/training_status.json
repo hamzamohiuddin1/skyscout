@@ -2,31 +2,22 @@
     "Drone": {
         "checkpoints": [
             {
-                "steps": 4999896,
-                "file_path": "results\\many-drones-1\\Drone\\Drone-4999896.onnx",
-                "reward": -361.99224444230396,
-                "creation_time": 1748857690.9037068,
+                "steps": 3250048,
+                "file_path": "results\\many-drones-1\\Drone\\Drone-3250048.onnx",
+                "reward": null,
+                "creation_time": 1748922127.046069,
                 "auxillary_file_paths": [
-                    "results\\many-drones-1\\Drone\\Drone-4999896.pt"
-                ]
-            },
-            {
-                "steps": 5000512,
-                "file_path": "results\\many-drones-1\\Drone\\Drone-5000512.onnx",
-                "reward": -319.8506638109684,
-                "creation_time": 1748857691.5875661,
-                "auxillary_file_paths": [
-                    "results\\many-drones-1\\Drone\\Drone-5000512.pt"
+                    "results\\many-drones-1\\Drone\\Drone-3250048.pt"
                 ]
             }
         ],
         "final_checkpoint": {
-            "steps": 5000512,
+            "steps": 3250048,
             "file_path": "results\\many-drones-1\\Drone.onnx",
-            "reward": -319.8506638109684,
-            "creation_time": 1748857691.5875661,
+            "reward": null,
+            "creation_time": 1748922127.046069,
             "auxillary_file_paths": [
-                "results\\many-drones-1\\Drone\\Drone-5000512.pt"
+                "results\\many-drones-1\\Drone\\Drone-3250048.pt"
             ]
         }
     },

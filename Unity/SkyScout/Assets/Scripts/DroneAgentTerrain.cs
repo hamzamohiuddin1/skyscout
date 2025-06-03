@@ -43,8 +43,8 @@ namespace MBaske
         }
 
         
-        public float minX = -20f, maxX = 20f;
-        public float minZ = -20f, maxZ = 20f;
+        public float minX = -40f, maxX = 40f;
+        public float minZ = -40f, maxZ = 40f;
 
         private void SpawnObjects()
         {
@@ -52,25 +52,31 @@ namespace MBaske
             transform.localPosition = new Vector3(20f, 4f, 0f);
             transform.localRotation = Quaternion.identity;
 
-            // Random XZ position
+            // Random XZ position in local space
             float randX = Random.Range(minX, maxX);
             float randZ = Random.Range(minZ, maxZ);
+            Vector3 localTarget = new Vector3(randX, 0f, randZ);
 
-            Vector3 rayOrigin = new Vector3(randX, 100f, randZ);
+            // Convert local target position to world space for raycasting
+            Vector3 worldTarget = transform.parent.TransformPoint(localTarget);
+            Vector3 rayOrigin = worldTarget + Vector3.up * 100f;
+
+            // Raycast in world space
             if (Physics.Raycast(rayOrigin, Vector3.down, out RaycastHit hitInfo, 200f))
             {
-                if (hitInfo.collider.gameObject.CompareTag("Terrain"))
+                Debug.DrawRay(rayOrigin, Vector3.down * hitInfo.distance, Color.red, 1f);
+
+                float slope = Vector3.Angle(hitInfo.normal, Vector3.up);
+                if (slope < 45f) // Acceptable slope
                 {
-                    float slope = Vector3.Angle(hitInfo.normal, Vector3.up);
-                    if (slope < 45f) // Acceptable slope
-                    {
-                        _goal.localPosition = hitInfo.point + hitInfo.normal * 2.0f;
-                        return;
-                    }
+                    // Convert hit world position to local space for _goal
+                    Vector3 localGoalPos = transform.parent.InverseTransformPoint(hitInfo.point + hitInfo.normal * 2.0f);
+                    _goal.localPosition = localGoalPos;
+                    return;
                 }
             }
 
-            // Fallback position if no valid hit
+            // Fallback position (local space)
             _goal.localPosition = new Vector3(randX, 16f, randZ);
         }
 
@@ -112,12 +118,15 @@ namespace MBaske
             float altitude = 0f;
             if (Physics.Raycast(dronePos, Vector3.down, out RaycastHit hitInfo, 100f))
             {
-                if (hitInfo.collider.gameObject.CompareTag("Terrain")) // Optional
-                {
-                    terrainHeight = hitInfo.point.y;
-                    altitude = dronePos.y - terrainHeight;
-                }
+                terrainHeight = hitInfo.point.y;
+                altitude = dronePos.y - terrainHeight;
             }
+
+            // Whether there is something in front (0 or 1)
+            sensor.AddObservation(frontBlocked ? 1f : 0f);
+
+            // Distance to obstacle in front (will be 0 if not blocked)
+            sensor.AddObservation(forwardObstacleDist);
 
             float maxAltitude = environmentSize; // or use 50f, etc.
             float normalizedAltitude = Mathf.Clamp01(altitude / maxAltitude);
@@ -127,7 +136,8 @@ namespace MBaske
         // Add this field at the top of the class
         private int stepCounter = 0;
         private const int logEvery = 100;  // <-- print every 100 Agent decisions
-
+        private bool frontBlocked = false;
+        private float forwardObstacleDist = 0f;
         public override void OnActionReceived(ActionBuffers actionBuffers)
         {
             float[] actions = actionBuffers.ContinuousActions.Array;
@@ -152,8 +162,9 @@ namespace MBaske
             }
             // Normal upright reward for being right-side up
             else
-            {
-                AddReward(0.1f * uprightReward);
+            {   
+                uprightReward = uprightReward * 0.5f;
+                AddReward(uprightReward);
             }
 
             float tiltAlignment = Vector3.Dot(upVector, dirToGoal);
@@ -206,26 +217,34 @@ namespace MBaske
             */
 
             // === Obstacle avoidance + climb encouragement ===
-            bool frontBlocked = false;
-            float forwardObstacleDist = 0f;
+            
 
             Vector3 directionToGoal = (goalPos - pos).normalized;
+
+            // Perform the raycast
             if (Physics.Raycast(pos, directionToGoal, out RaycastHit wallHit, 3f))
             {
-                if (wallHit.collider.CompareTag("Terrain"))
-                {
-                    frontBlocked = true;
-                    forwardObstacleDist = wallHit.distance;
-                }
+                // Draw a green ray if it hits terrain
+                Debug.DrawRay(pos, directionToGoal * wallHit.distance, Color.green, 0.1f);
+                frontBlocked = true;
+                forwardObstacleDist = wallHit.distance;
             }
 
             float climbReward = 0f;
             if (frontBlocked && distanceDelta < 0.01f)
             {
                 float upwardVelocity = Mathf.Max(0f, velocity.y);
-                climbReward = 0.1f * upwardVelocity;
+                climbReward = upwardVelocity;
+                reward += Mathf.Min(0.25f, climbReward);
+            }
+            else {
+                climbReward = 0.25f;
                 reward += climbReward;
             }
+
+            float yawSpeed = Mathf.Abs(multicopter.Rigidbody.angularVelocity.y);
+            AddReward(-0.01f * yawSpeed);
+
             AddReward(reward);
             // Time penalty
             AddReward(-0.005f);
@@ -235,14 +254,11 @@ namespace MBaske
             {
                 Debug.Log(
                     $"Step {StepCount} | " +
-                    $"Dist:{totalDistance:F2} | " +
-                    $"DronePos:{pos:F2} | " +
-                    $"GoalPos:{goalPos:F2} | " +
-                    $"Dist:{totalDistance:F2} | " +
-                    $"Δd:{distanceDelta:F3} | " +
-                    $"Vel:{velocity.magnitude:F2} " +
-                    $"(→Goal:{velocityTowardsGoal:F2}) | " +
-                    $"UpDot:{uprightReward:F2} | ClimbReward:{climbReward:F2} | " +
+                    $"Dist:{-0.1f * totalDistance:F2} | " +
+                    $"Δd:{distanceDelta * 0.5f:F3} | " +
+                    $"Yaw:{-0.01f * yawSpeed:F2} | " +
+                    $"(→Goal:{0.2f * velocityTowardsGoal:F2}) | " +
+                    $"UpDot:{uprightReward:F2} | ClimbReward:{Mathf.Min(0.25f, climbReward):F2} | " +
                     $"RewardThisStep:{reward:F3}"
                 );
             }
