@@ -48,3 +48,14 @@ Implemented entirely from scratch to guide learning, including:
 
 ## **Project Structure**
 
+```text
+SkyScout/
+├── Assets/
+│   ├── Agents/            # DroneAgent scripts & prefabs
+│   ├── Environments/      # Training scenes and goal spawners
+│   ├── Models/            # Trained .nn/.onnx models
+│   └── Scripts/           # Utilities, camera follow, config helpers
+├── config/                # ML-Agents training configuration (YAML)
+└── README.md
+
+
